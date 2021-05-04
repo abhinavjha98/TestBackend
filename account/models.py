@@ -10,3 +10,11 @@ class User(AbstractUser):
     mobile = models.CharField(max_length=15, null=True, blank=True, unique=True)
     dob = models.DateField(null=True, blank=True)
     password = models.CharField(max_length=150, null=True, blank=True)
+
+class Base(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+

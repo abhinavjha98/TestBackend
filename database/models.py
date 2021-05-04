@@ -12,3 +12,7 @@ class Base(models.Model):
 class aa419(Base):
     url = models.CharField(max_length=200, null=True)
     label = models.CharField(max_length=50,null=True)
+
+class MillionURL(Base):
+    url = models.CharField(max_length=200, null=True)
+    label = models.CharField(max_length=50,null=True)

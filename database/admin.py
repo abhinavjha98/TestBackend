@@ -8,4 +8,10 @@ class aa419Admin(ImportExportModelAdmin):
     search_fields = ('url', 'label')
     list_filter = ('url', 'label')
 
-admin.site.register(aa419)
+class MillionURLAdmin(ImportExportModelAdmin):
+    list_display = ('url', 'label')
+    search_fields = ('url', 'label')
+    list_filter = ('url', 'label')
+
+admin.site.register(aa419,aa419Admin)
+admin.site.register(MillionURL,MillionURLAdmin)
