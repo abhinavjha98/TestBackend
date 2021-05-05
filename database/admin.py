@@ -6,7 +6,7 @@ from import_export.admin import ImportExportModelAdmin
 class aa419Admin(ImportExportModelAdmin):
     list_display = ('url', 'label')
     search_fields = ('url', 'label')
-    list_filter = ('url', 'label')
+    list_filter = ('created_at','updated_at')
 
 class MillionURLAdmin(ImportExportModelAdmin):
     list_display = ('url', 'label')
