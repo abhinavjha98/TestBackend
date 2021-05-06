@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'account',
     'database',
     'django_crontab',
+    'phishingurl',
 ]
 
 MIDDLEWARE = [
