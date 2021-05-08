@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/m/',include('account.urls')),
     path('api/m/',include('database.urls')),
+    path('api/m/',include('phishing.urls')),
 ]
