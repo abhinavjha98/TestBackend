@@ -34,3 +34,22 @@ def makeTokens(f):
     if 'com' in total_Tokens:
         total_Tokens.remove('com')	#removing .com since it occurs a lot of times and it should not be included in our features
     return total_Tokens
+
+def find_date(url):
+    who_is = whois.whois(url)
+    if type(who_is.creation_date) is list:
+        date_ip_address = who_is.creation_date[0]
+    else:
+        date_ip_address = who_is.creation_date
+
+    # print(date_ip_address)
+    current_time = datetime.datetime.now()
+    if date_ip_address is None:
+
+        days = 0
+    else:
+        actual_time = current_time-date_ip_address
+        # print(actual_time)
+        days = int(actual_time.days)
+        # print(days)
+    return days
