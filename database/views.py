@@ -19,8 +19,8 @@ class FakeWebsiteView(viewsets.ViewSet):
         soup = BeautifulSoup(page.content, 'html.parser')
         url_list = []
         j=0
-        while(j<500):
-            if j<500:
+        while(j<60):
+            if j<60:
                 URL = 'https://db.aa419.org/fakebankslist.php?start='+str(j)
                 page = requests.get(URL)
                 soup = BeautifulSoup(page.content, 'html.parser')
