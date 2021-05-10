@@ -68,11 +68,11 @@ def web_traffic(url):
         "REACH")['RANK']
     rank = int(rank)
   except TypeError:
-        return 1
+        return 0
   if rank <100000:
-    return 0
-  else:
     return 1
+  else:
+    return 0
 
 def forwarding(response):
   if response == "":
@@ -97,9 +97,9 @@ def mouseOver(response):
     return 0
   else:
     if re.findall("<script>.+onmouseover.+</script>", response.text):
-      return 1
-    else:
       return 0
+    else:
+      return 1
 
 def iframe(response):
   if response == "":
@@ -109,23 +109,25 @@ def iframe(response):
           return 1
       else:
           return 0
+
 def redirection(url):
   try:
     pos = url.rfind('//')
     print(pos)
     if pos > 6:
       if pos > 7:
-        return 1
-      else:
         return 0
+      else:
+        return 1
     else:
-      return 0
+      return 1
   except:
-    return 1
+    return 0
 
 def httpDomain(url):
-  domain = urlparse(url).netloc
-  if 'https' in domain:
+  # domain = urlparse(url).netloc
+  # print(domain)
+  if 'https' in url:
     return 1
   else:
     return 0
@@ -133,37 +135,19 @@ def httpDomain(url):
 def tinyURL(url):
     match=re.search(shortening_services,url)
     if match:
-        return 1
-    else:
         return 0
+    else:
+        return 1
 
 def prefixSuffix(url):
     if '-' in urlparse(url).netloc:
-        return 1            # phishing
+        return 0            # phishing
     else:
-        return 0     
+        return 1     
 
-def check_url(url):
-  try:
-    response = requests.get(url)
-  except:
-    return "bad"
-  url_good_bad = ""
-  url_date = find_date(url)
-  
-  if url_date < 90:
-    url_date_response = 1
-  else:
-    url_date_response = 0
-
-  web_traffics = web_traffic(url)
-  print(web_traffic(url))
-  if web_traffics == 0:
-    url_good_bad = "good"
-    return url_good_bad
-  else:
-    url_good_bad = "bad"
-
+def global_variable():
+  global x
+  global y
   urls_data = pd.read_csv("datasets/urldata.csv")
 
   y = urls_data["label"]
@@ -173,15 +157,49 @@ def check_url(url):
 
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-  logit = LogisticRegression(max_iter=1000000)	
+  logit = LogisticRegression()
+  x = logit
+  return x,X_train,y_train,vectorizer	
+
+def check_url(url):
+  global xy
+  xy = "hello"
+  global logit
+  global y_train
+  global X_train
+  global vectorizer
+  try:
+    response = requests.get(url)
+  except:
+    return "bad"
+  url_good_bad = ""
+  url_date = find_date(url)
+
+  if url_date < 90:
+    url_date_response = 1
+  else:
+    url_date_response = 0
+
+  web_traffics = web_traffic(url)
+  print(web_traffic(url))
+  if web_traffics == 1:
+    url_good_bads = "good"
+  else:
+    url_good_bads = "bad"
+  print(url_good_bads)
+
+  if xy == "hello":
+    logit,X_train,y_train,vectorizer = global_variable()
+    xy = logit
   logit.fit(X_train, y_train)
   X_predict=[url]
   X_predict = vectorizer.transform(X_predict)
   New_predict = logit.predict(X_predict)
-  # print(New_predict)
+  print(New_predict)
   if New_predict[0] == 'good':
     url_good_bad = "good"
-    return url_good_bad
+    if url_good_bads == "good":
+      return url_good_bads
   else:
     url_good_bad = "bad"
   
@@ -196,21 +214,25 @@ def check_url(url):
     url_good_bad = "good"
   else:
     url_good_bad = "bad"
-  print(forwarding(response))
+  print("Forward URL "+str(forwarding(response)))
   
   right_click_url = rightClick(response)
-  print(rightClick(response))
+  print("Right Click "+str(rightClick(response)))
+
   mouse_over_url = mouseOver(response)
-  print(mouseOver(response))
+  print("Mouse Over "+str(mouseOver(response)))
+
   iframe_url = iframe(response)
-  print(iframe(response))
+  print("IFrame "+str(iframe(response)))
   
-  print(httpDomain(url))
-  print(tinyURL(url))
-  print(prefixSuffix(url))
+  print("HTTP Domain "+str(httpDomain(url)))
+  print("Tiny URL "+str(tinyURL(url)))
+  print("Prefix Suffix "+str(prefixSuffix(url)))
 
   good_or_bad = forward_url and right_click_url and mouse_over_url and iframe_url and redirection_url
   if good_or_bad == 0:
     print("Bad URL")
+    return "bad"
   else:
     print("Good Url")
+    return "good"
