@@ -188,13 +188,24 @@ def check_url(url):
     url_good_bads = "bad"
   print(url_good_bads)
 
-  if xy == "hello":
-    logit,X_train,y_train,vectorizer = global_variable()
-    xy = logit
-  logit.fit(X_train, y_train)
+  # if xy == "hello":
+  #   logit,X_train,y_train,vectorizer = global_variable()
+  #   xy = logit
+  # logit.fit(X_train, y_train)
+  urls_data = pd.read_csv("datasets/urldata.csv")
+
+  y = urls_data["label"]
+  url_list = urls_data["url"]
+  vectorizer = TfidfVectorizer(tokenizer=makeTokens)
+  X = vectorizer.fit_transform(url_list)
+
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  filename = "datasets/finalized_model.sav"
+  loaded_model = pickle.load(open(filename, 'rb'))
+  # result = loaded_model.fit(X_train, y_train)
   X_predict=[url]
   X_predict = vectorizer.transform(X_predict)
-  New_predict = logit.predict(X_predict)
+  New_predict = loaded_model.predict(X_predict)
   print(New_predict)
   if New_predict[0] == 'good':
     url_good_bad = "good"
