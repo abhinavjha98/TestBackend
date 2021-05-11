@@ -17,6 +17,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import time
+
 def makeTokens(f):
     tkns_BySlash = str(f.encode('utf-8')).split('/')	# make tokens after splitting by slash
     total_Tokens = []
@@ -79,9 +81,9 @@ def forwarding(response):
     return 0
   else:
     if len(response.history) <= 2:
-      return 1
-    else:
       return 0
+    else:
+      return 1
 
 def rightClick(response):
   if response == "":
@@ -162,6 +164,7 @@ def global_variable():
   return x,X_train,y_train,vectorizer	
 
 def check_url(url):
+  start_time = time.time()
   global xy
   xy = "hello"
   global logit
@@ -181,12 +184,12 @@ def check_url(url):
     url_date_response = 0
 
   web_traffics = web_traffic(url)
-  print(web_traffic(url))
+  print(web_traffic(url),(time.time() - start_time))
   if web_traffics == 1:
     url_good_bads = "good"
   else:
     url_good_bads = "bad"
-  print(url_good_bads)
+  print(url_good_bads,(time.time() - start_time))
 
   # if xy == "hello":
   #   logit,X_train,y_train,vectorizer = global_variable()
@@ -206,7 +209,7 @@ def check_url(url):
   X_predict=[url]
   X_predict = vectorizer.transform(X_predict)
   New_predict = loaded_model.predict(X_predict)
-  print(New_predict)
+  print(New_predict,(time.time() - start_time))
   if New_predict[0] == 'good':
     url_good_bad = "good"
     if url_good_bads == "good":
@@ -225,25 +228,25 @@ def check_url(url):
     url_good_bad = "good"
   else:
     url_good_bad = "bad"
-  print("Forward URL "+str(forwarding(response)))
+  print("Forward URL "+str(forwarding(response)),(time.time() - start_time))
   
   right_click_url = rightClick(response)
-  print("Right Click "+str(rightClick(response)))
+  print("Right Click "+str(rightClick(response)),(time.time() - start_time))
 
   mouse_over_url = mouseOver(response)
-  print("Mouse Over "+str(mouseOver(response)))
+  print("Mouse Over "+str(mouseOver(response)),(time.time() - start_time))
 
   iframe_url = iframe(response)
-  print("IFrame "+str(iframe(response)))
+  print("IFrame "+str(iframe(response)),(time.time() - start_time))
   
-  print("HTTP Domain "+str(httpDomain(url)))
-  print("Tiny URL "+str(tinyURL(url)))
-  print("Prefix Suffix "+str(prefixSuffix(url)))
+  print("HTTP Domain "+str(httpDomain(url)),(time.time() - start_time))
+  print("Tiny URL "+str(tinyURL(url)),(time.time() - start_time))
+  print("Prefix Suffix "+str(prefixSuffix(url)),(time.time() - start_time))
 
   good_or_bad = forward_url and right_click_url and mouse_over_url and iframe_url and redirection_url
   if good_or_bad == 0:
-    print("Bad URL")
+    print("Bad URL",(time.time() - start_time))
     return "bad"
   else:
-    print("Good Url")
+    print("Good Url",(time.time() - start_time))
     return "good"
