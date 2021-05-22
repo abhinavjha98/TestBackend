@@ -16,3 +16,6 @@ class aa419(Base):
 class MillionURL(Base):
     url = models.CharField(max_length=200, null=True)
     label = models.CharField(max_length=50,null=True)
+
+class CronData(models.Model):
+    time = models.CharField(max_length=100)

@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'account',
     'database',
     'django_crontab',
-    'phishing',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +78,9 @@ TEMPLATES = [
             
         },
     },
+]
+CRONJOBS = [
+    ('*/1 * * * *', 'database.cron.my_scheduled_job')
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
