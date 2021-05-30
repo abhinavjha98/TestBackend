@@ -12,12 +12,20 @@ import urllib.request
 from urllib.parse import urlparse,urlencode
 import ipaddress
 import requests
+import multiprocessing
 # Create your views here.
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import time
+class CustomUnpickler(pickle.Unpickler):
+
+    def find_class(self, module, name):
+        try:
+            return super().find_class(__name__, name)
+        except AttributeError:
+            return super().find_class(module, name)
 
 def makeTokens(f):
     tkns_BySlash = str(f.encode('utf-8')).split('/')	# make tokens after splitting by slash
@@ -178,6 +186,7 @@ def check_url(url):
     url_date_response = 0
 
   web_traffics = web_traffic(url)
+  
   print(web_traffic(url),(time.time() - start_time))
   if web_traffics == 1:
     url_good_bads = "good"
@@ -189,19 +198,21 @@ def check_url(url):
   #   logit,X_train,y_train,vectorizer = global_variable()
   #   xy = logit
   # logit.fit(X_train, y_train)
-  urls_data = pd.read_csv("datasets/urldata.csv")
+  # urls_data = pd.read_csv("datasets/urldata.csv")
 
   # y = urls_data["label"]
-  url_list = urls_data["url"]
-  vectorizer = TfidfVectorizer(tokenizer=makeTokens)
-  X = vectorizer.fit_transform(url_list)
+  # url_list = urls_data["url"]
+  # vectorizer = TfidfVectorizer(tokenizer=makeTokens)
+  # X = vectorizer.fit_transform(url_list)
 
   # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
   filename = "datasets/finalized_model.sav"
   loaded_model = pickle.load(open(filename, 'rb'))
+  filename1 = "datasets/finalized_vectorizer.sav"
+  loaded_vector = CustomUnpickler(open(filename1, 'rb')).load()
   # result = loaded_model.fit(X_train, y_train)
   X_predict=[url]
-  X_predict = vectorizer.transform(X_predict)
+  X_predict = loaded_vector.transform(X_predict)
   New_predict = loaded_model.predict(X_predict)
   print(New_predict,(time.time() - start_time))
   if New_predict[0] == 'good':
