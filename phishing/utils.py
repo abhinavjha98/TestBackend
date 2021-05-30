@@ -147,21 +147,21 @@ def prefixSuffix(url):
     else:
         return 1     
 
-def global_variable():
-  global x
-  global y
-  urls_data = pd.read_csv("datasets/urldata.csv")
+# def global_variable():
+#   global x
+#   global y
+#   urls_data = pd.read_csv("datasets/urldata.csv")
 
-  y = urls_data["label"]
-  url_list = urls_data["url"]
-  vectorizer = TfidfVectorizer(tokenizer=makeTokens)
-  X = vectorizer.fit_transform(url_list)
+#   y = urls_data["label"]
+#   url_list = urls_data["url"]
+#   vectorizer = TfidfVectorizer(tokenizer=makeTokens)
+#   X = vectorizer.fit_transform(url_list)
 
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+#   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-  logit = LogisticRegression()
-  x = logit
-  return x,X_train,y_train,vectorizer	
+#   logit = LogisticRegression()
+#   x = logit
+#   return x,X_train,y_train,vectorizer	
 
 def check_url(url):
   start_time = time.time()
