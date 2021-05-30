@@ -165,12 +165,6 @@ def global_variable():
 
 def check_url(url):
   start_time = time.time()
-  global xy
-  xy = "hello"
-  global logit
-  global y_train
-  global X_train
-  global vectorizer
   try:
     response = requests.get(url)
   except:
@@ -197,12 +191,12 @@ def check_url(url):
   # logit.fit(X_train, y_train)
   urls_data = pd.read_csv("datasets/urldata.csv")
 
-  y = urls_data["label"]
+  # y = urls_data["label"]
   url_list = urls_data["url"]
   vectorizer = TfidfVectorizer(tokenizer=makeTokens)
   X = vectorizer.fit_transform(url_list)
 
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
   filename = "datasets/finalized_model.sav"
   loaded_model = pickle.load(open(filename, 'rb'))
   # result = loaded_model.fit(X_train, y_train)

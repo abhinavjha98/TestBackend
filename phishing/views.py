@@ -35,9 +35,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 class PhishingView(viewsets.ViewSet):
-    
-    
-        # return x,X_train,y_train,vectorizer	
 
     def check_url(self,response):
         data = response.data 
@@ -47,7 +44,7 @@ class PhishingView(viewsets.ViewSet):
             return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
         else:
             return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
-        return Response(data={'status': 'Completed'}, status=status.HTTP_200_OK)
+      
 
 
 
