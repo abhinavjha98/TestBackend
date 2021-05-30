@@ -10,6 +10,17 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from database.models import aa419
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    CompoundSearchFilterBackend
+)
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    OrderingFilterBackend,
+)
+from .documents import *
+from .serializers import *
 # Create your views here.
 class FakeWebsiteView(viewsets.ViewSet):
     
@@ -44,3 +55,30 @@ class FakeWebsiteView(viewsets.ViewSet):
         return Response(data={'status': 'Completed'}, status=status.HTTP_200_OK)
 
 
+class PublisherDocumentView(DocumentViewSet):
+    document = aa419Document
+    serializer_class = aa419DocumentSerializer
+    lookup_field = 'id'
+    fielddata=True
+    filter_backends = [
+        FilteringFilterBackend,
+        OrderingFilterBackend,
+        CompoundSearchFilterBackend,
+    ]
+   
+    search_fields = (
+        'url',
+        'content',
+    )
+    multi_match_search_fields = (
+       'url',
+        'content',
+    )
+    filter_fields = {
+       'url' : 'url',
+        'content' : 'content',
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ( 'id'  ,)

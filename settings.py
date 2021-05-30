@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'account',
     'database',
     'django_crontab',
-    'phishing',
+    
+
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
