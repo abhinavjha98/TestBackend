@@ -2,7 +2,7 @@ from django.shortcuts import render
 # EDA Packages
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework import viewsets
+from rest_framework import authentication, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -33,10 +33,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class PhishingView(viewsets.ViewSet):
     
-
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def check_url(self,response):
         data = response.data 
         url = data["url"]
