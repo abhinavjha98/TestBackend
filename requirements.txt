@@ -8,9 +8,14 @@ diff-match-patch==20200713
 Django==3.0.6
 django-allauth==0.41.0
 django-crontab==0.7.1
+django-elasticsearch-dsl==7.2.0
+django-elasticsearch-dsl-drf==0.22.1
 django-import-export==2.5.0
+django-nine==0.2.4
 djangorestframework==3.10.0
 djangorestframework-simplejwt==4.6.0
+elasticsearch==7.12.1
+elasticsearch-dsl==7.3.0
 et-xmlfile==1.1.0
 future==0.18.2
 idna==2.10
