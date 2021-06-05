@@ -4,5 +4,5 @@ from account import views
 from .views import PhishingView
 
 urlpatterns = [
-  path('checkurl/',PhishingView.as_view({'get':'check_url'})),
+  path('checkurl/',PhishingView.as_view({'post':'check_url'})),
 ]
