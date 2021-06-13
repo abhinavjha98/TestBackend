@@ -52,7 +52,7 @@ class PhishingView(viewsets.ViewSet):
         else:
             url = data["url"]
             check_urls = check_url(url)
-            cache.get_or_set(url,check_urls)
+            cache.get_or_set(url,check_urls,timeout=None)
             if check_urls == "good":
                 return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
             else:
