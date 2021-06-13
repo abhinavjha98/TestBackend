@@ -34,18 +34,29 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import *
+from django.core.cache import cache
 class PhishingView(viewsets.ViewSet):
     
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     def check_url(self,response):
+        
         data = response.data 
-        url = data["url"]
-        check_urls = check_url(url)
-        if check_urls == "good":
-            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+        if(cache.get(data["url"])):
+            response_data = cache.get(data["url"])
+            if response_data == "good":
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            else:
+                return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
         else:
-            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+            url = data["url"]
+            check_urls = check_url(url)
+            cache.get_or_set(url,check_urls)
+            if check_urls == "good":
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            else:
+                return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
       
 
 

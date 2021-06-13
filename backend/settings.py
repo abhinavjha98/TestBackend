@@ -25,7 +25,7 @@ SECRET_KEY = 'q3-k%ogpn-)%08atz9yl&svz=w&bl6^!=nv&usgv%_k0tc__$%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -146,4 +146,11 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60*24*180),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=20),
     'ALGORITHM': 'HS256',
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'result_cache',
+    }
 }
