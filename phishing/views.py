@@ -28,6 +28,7 @@ from urllib.parse import urlparse,urlencode
 import ipaddress
 import requests
 from phishing.utils import makeTokens
+from django.utils import timezone
 # Create your views here.
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -46,20 +47,20 @@ class PhishingView(viewsets.ViewSet):
         if(cache.get(data["url"])):
             response_data = cache.get(data["url"])
             if response_data == "good":
-                Result(user=user,url=data['url'],label="good").save()
+                Result(user=user,url=data['url'],label="good",date=timezone.now()).save()
                 return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
             else:
-                Result(user=user,url=data['url'],label="bad").save()
+                Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
                 return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
         else:
             url = data["url"]
             check_urls = check_url(url)
             cache.get_or_set(url,check_urls,timeout=None)
             if check_urls == "good":
-                Result(user=user,url=data['url'],label="good").save()
+                Result(user=user,url=data['url'],label="good",date=timezone.now()).save()
                 return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
             else:
-                Result(user=user,url=data['url'],label="bad").save()
+                Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
                 return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
       
 
