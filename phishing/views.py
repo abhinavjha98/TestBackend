@@ -62,6 +62,32 @@ class PhishingView(viewsets.ViewSet):
             else:
                 Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
                 return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+
+class PhishingUnView(viewsets.ViewSet):
+    
+    authentication_classes = []
+    permission_classes = []
+    def check_urls(self,response):
+        # user = response.user
+        data = response.data 
+        if(cache.get(data["url"])):
+            response_data = cache.get(data["url"])
+            if response_data == "good":
+                # Result(user=user,url=data['url'],label="good",date=timezone.now()).save()
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            else:
+                # Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
+                return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+        else:
+            url = data["url"]
+            check_urls = check_url(url)
+            cache.get_or_set(url,check_urls,timeout=None)
+            if check_urls == "good":
+                # Result(user=user,url=data['url'],label="good",date=timezone.now()).save()
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            else:
+                # Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
+                return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
       
 
 
