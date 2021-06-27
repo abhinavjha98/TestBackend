@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from database.models import aa419
-from phishing.utils import check_url
+from phishing.utils import check_url,find_urls
 import pandas as pd
 import numpy as np
 import random
@@ -88,7 +88,40 @@ class PhishingUnView(viewsets.ViewSet):
             else:
                 # Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
                 return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
-      
+
+    def check_sms(self,request):
+        data = request.data
+        message = data.get('message')
+        url_list = find_urls(message)
+        response_list = []
+        good_data=0
+        bad_data=0
+        
+        for i in range(len(url_list)):
+            if(cache.get(url_list[i])):
+                response_data = cache.get(url_list[i])
+                if response_data == "good":
+                    good_data = good_data + 1
+                else:
+                    bad_data = bad_data + 1
+            else:
+                good_bad = check_url(url_list[i])
+                cache.get_or_set(url_list[i],good_bad,timeout=None)
+                if(good_bad == "good"):
+                    good_data = good_data + 1
+                else:
+                    bad_data = bad_data + 1
+        
+        if(len(url_list)==0):
+            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+
+        if good_data > bad_data:
+            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+        elif good_data < bad_data:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+        
 
 
 
