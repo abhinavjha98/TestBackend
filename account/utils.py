@@ -32,7 +32,7 @@ def register_user(**kwargs):
         print(name[0])
         username = kwargs.pop("username")
         password = kwargs.pop("password")
-        dob = kwargs.pop("dob")
+        
         mobile = kwargs.pop("mobile")
         print(mobile)
         email = kwargs.pop("email")
@@ -41,7 +41,7 @@ def register_user(**kwargs):
             email=email[0],
             username=username[0],
             mobile=mobile[0],
-            dob=dob[0],
+            
             password=password[0]
         )
         print(user)

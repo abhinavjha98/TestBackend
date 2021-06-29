@@ -29,7 +29,7 @@ class UserAuthView(viewsets.ViewSet):
                     status=status.HTTP_200_OK)
             else:
                 return Response(
-                    data={'status': True, 'message': message, 'token': token}, 
+                    data={'status': True, 'message': message}, 
                     status=status.HTTP_200_OK)
         except Exception as e:
             return Response(
