@@ -123,6 +123,8 @@ class PhishingUnView(viewsets.ViewSet):
             return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
         
 
+    def print_hello(self,request):
+        return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
 
 
 

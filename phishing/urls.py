@@ -7,4 +7,5 @@ urlpatterns = [
   path('checkurl/',PhishingView.as_view({'post':'check_url'})),
   path('checkurls/',PhishingUnView.as_view({'post':'check_urls'})),
   path('smsurls/',PhishingUnView.as_view({'post':'check_sms'})),
+  path('test/',PhishingUnView.as_view({'get':'print_hello'}))
 ]
