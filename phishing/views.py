@@ -63,6 +63,47 @@ class PhishingView(viewsets.ViewSet):
                 Result(user=user,url=data['url'],label="bad",date=timezone.now()).save()
                 return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
 
+    
+    def check_text(self,request):
+        user = request.user
+        data = request.data
+        message = data.get('message')
+        url_list = find_urls(message)
+        print(url_list)
+        response_list = []
+        good_data=0
+        bad_data=0
+        
+        for i in range(len(url_list)):
+            if(cache.get(url_list[i])):
+                response_data = cache.get(url_list[i])
+                if response_data == "good":
+                    Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                    good_data = good_data + 1
+                else:
+                    Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                    bad_data = bad_data + 1
+            else:
+                good_bad = check_url(url_list[i])
+                cache.get_or_set(url_list[i],good_bad,timeout=None)
+                if(good_bad == "good"):
+                    Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                    good_data = good_data + 1
+                else:
+                    Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                    bad_data = bad_data + 1
+        
+        if(len(url_list)==0):
+            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+
+        if good_data > bad_data:
+            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+        elif good_data < bad_data:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+
+
 class PhishingUnView(viewsets.ViewSet):
     
     authentication_classes = []
@@ -93,6 +134,7 @@ class PhishingUnView(viewsets.ViewSet):
         data = request.data
         message = data.get('message')
         url_list = find_urls(message)
+        print(url_list)
         response_list = []
         good_data=0
         bad_data=0
