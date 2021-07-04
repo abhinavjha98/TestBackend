@@ -18,4 +18,4 @@ class WebsiteUser(HttpUser):
     def test_unauthorized_api(self):
         data = '{"url":"https://www.facebook.com/abc.exe"}'
         json.loads(data)
-        return self.client.post('http://localhost/api/m/checkurls/', data=data,headers={'Content-type': 'application/json'})
+        return self.client.post('http://20.98.205.93/api/m/checkurls/', data=data,headers={'Content-type': 'application/json'})
