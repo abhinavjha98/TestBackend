@@ -26,7 +26,7 @@ SECRET_KEY = 'q3-k%ogpn-)%08atz9yl&svz=w&bl6^!=nv&usgv%_k0tc__$%'
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
+    'corsheaders',
 ]
 ELASTICSEARCH_DSL =  {
     'default' :{
@@ -52,6 +53,7 @@ ELASTICSEARCH_DSL =  {
     }
 }
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
