@@ -173,6 +173,7 @@ def prefixSuffix(url):
 
 def check_url(url):
   start_time = time.time()
+
   try:
     response = requests.get(url)
   except:

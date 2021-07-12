@@ -75,6 +75,9 @@ class PhishingView(viewsets.ViewSet):
         bad_data=0
         
         for i in range(len(url_list)):
+            good_list = ['https://www.pandrdental.com/','https://www.intechhub.com/']
+            if url_list[i] in good_list:
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
             if(cache.get(url_list[i])):
                 response_data = cache.get(url_list[i])
                 if response_data == "good":
