@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from database.models import aa419
-from phishing.utils import check_url,find_urls
+from phishing.utils import check_url, clean_text,find_urls
 import pandas as pd
 import numpy as np
 import random
@@ -68,7 +68,8 @@ class PhishingView(viewsets.ViewSet):
         user = request.user
         data = request.data
         message = data.get('message')
-        url_list = find_urls(message)
+        msg = clean_text(message)
+        url_list = find_urls(msg)
         print(url_list)
         response_list = []
         good_data=0
