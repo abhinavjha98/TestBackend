@@ -37,6 +37,14 @@ from sklearn.model_selection import train_test_split
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
 from django.core.cache import cache
+from rest_framework.parsers import MultiPartParser, FileUploadParser
+import pathlib
+import os
+from django.core.files.storage import default_storage
+from pdf2image import convert_from_path
+import os
+from django.core.files.base import ContentFile
+import easyocr
 class PhishingView(viewsets.ViewSet):
     
     authentication_classes = [JWTAuthentication]
@@ -106,6 +114,110 @@ class PhishingView(viewsets.ViewSet):
             return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
         else:
             return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+
+    def check_attachment(self,request):
+        user = request.user
+        data = request.data
+        message = data.get('message')
+        parser_classes = [MultiPartParser, FileUploadParser]
+        multiple_files = request.FILES
+        attach_file = multiple_files.getlist("attach_file")
+        reader = easyocr.Reader(['en'])
+        good_data=0
+        bad_data=0
+        if(message is None):
+            pass
+        else:
+            msg = clean_text(message)
+            url_list = find_urls(msg)
+            print(url_list)
+            if(len(url_list)==0):
+                pass
+            else:
+                for i in range(len(url_list)):
+                    good_list = ['https://www.pandrdental.com/','https://www.intechhub.com/']
+                    if url_list[i] in good_list:
+                        good_data+=1
+                    elif(cache.get(url_list[i])):
+                        response_data = cache.get(url_list[i])
+                        if response_data == "good":
+                            Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                            good_data = good_data + 1
+                        else:
+                            Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                            bad_data = bad_data + 1
+                    else:
+                        good_bad = check_url(url_list[i])
+                        cache.get_or_set(url_list[i],good_bad,timeout=None)
+                        if(good_bad == "good"):
+                            Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                            good_data = good_data + 1
+                        else:
+                            Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                            bad_data = bad_data + 1
+        print(good_data)
+        print(bad_data)
+        for i in attach_file:
+            file_name = i.name.split(".")[0]
+            extension = i.name.split(".")[1]
+            print(i)
+            pdfs = str(i)
+            path = default_storage.save('tmp/'+file_name+extension, ContentFile(i.read()))
+            
+            if extension == "pdf":
+                pages = convert_from_path('tmp/'+file_name+extension, 350)
+                for page in pages:
+                    text = ""
+                    image_name = "Page_" + str(i.name) + ".jpg"  
+                    page.save(image_name, "JPEG")
+                    output = reader.readtext("Page_" + str(i.name) + ".jpg")
+                    for detection in output:
+                        text += detection[1]
+                    print(text)
+            else:
+                output = reader.readtext('tmp/'+file_name+extension)
+                text = ""
+                for detection in output:
+                    text += detection[1] + ""
+                print(text)
+        msg = ""
+        url_list=[]
+        msg = clean_text(text)
+        url_list = find_urls(msg)
+        print(url_list)
+        response_list = []
+        
+        for i in range(len(url_list)):
+            good_list = ['https://www.pandrdental.com/','https://www.intechhub.com/']
+            if url_list[i] in good_list:
+                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            if(cache.get(url_list[i])):
+                response_data = cache.get(url_list[i])
+                if response_data == "good":
+                    Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                    good_data = good_data + 1
+                else:
+                    Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                    bad_data = bad_data + 1
+            else:
+                good_bad = check_url(url_list[i])
+                cache.get_or_set(url_list[i],good_bad,timeout=None)
+                if(good_bad == "good"):
+                    Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
+                    good_data = good_data + 1
+                else:
+                    Result(user=user,url=url_list[i],label="bad",date=timezone.now()).save()
+                    bad_data = bad_data + 1
+        
+        print(good_data)
+        print(bad_data)
+        if good_data > bad_data:
+            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+        elif good_data < bad_data:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)     
+        
 
 
 class PhishingUnView(viewsets.ViewSet):
