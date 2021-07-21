@@ -43,6 +43,7 @@ import os
 from django.core.files.storage import default_storage
 from pdf2image import convert_from_path
 import os
+import PyPDF2
 from django.core.files.base import ContentFile
 import easyocr
 class PhishingView(viewsets.ViewSet):
@@ -165,15 +166,24 @@ class PhishingView(viewsets.ViewSet):
             path = default_storage.save('tmp/'+file_name+extension, ContentFile(i.read()))
             
             if extension == "pdf":
-                pages = convert_from_path('tmp/'+file_name+extension, 350)
-                for page in pages:
-                    text = ""
-                    image_name = "Page_" + str(i.name) + ".jpg"  
-                    page.save(image_name, "JPEG")
-                    output = reader.readtext("Page_" + str(i.name) + ".jpg")
-                    for detection in output:
-                        text += detection[1]
-                    print(text)
+                pdfFileObj = open('tmp/'+file_name+extension, 'rb')
+                pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+                print(pdfReader.numPages) 
+                pages = pdfReader.numPages
+                text=""
+                
+                for j in range(pages):
+                    pageObj = pdfReader.getPage(j)
+                    text += pageObj.extractText()
+                # pages = convert_from_path('tmp/'+file_name+extension, 350)
+                # for page in pages:
+                #     text = ""
+                #     image_name = "Page_" + str(i.name) + ".jpg"  
+                #     page.save(image_name, "JPEG")
+                #     output = reader.readtext("Page_" + str(i.o9) + ".jpg")
+                #     for detection in output:
+                #         text += detection[1]
+                #     print(text)
             else:
                 output = reader.readtext('tmp/'+file_name+extension)
                 text = ""
