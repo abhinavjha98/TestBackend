@@ -122,6 +122,7 @@ class PhishingView(viewsets.ViewSet):
         parser_classes = [MultiPartParser, FileUploadParser]
         multiple_files = request.FILES
         attach_file = multiple_files.getlist("attach_file")
+        print(attach_file)
         reader = easyocr.Reader(['en'])
         good_data=0
         bad_data=0
