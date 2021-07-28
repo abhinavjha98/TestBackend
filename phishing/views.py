@@ -288,14 +288,14 @@ class PhishingUnView(viewsets.ViewSet):
             message = message.replace(i,inner_text+i+outer_text+i+outer)
         message = "<p> "+message+" </p>"
         if(len(url_list)==0):
-            return Response(data={'status': 'Good Url','message':message}, status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
 
         if good_data > bad_data:
-            return Response(data={'status': 'Good Url','message':message}, status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
         elif good_data < bad_data:
-            return Response(data={'status': 'Bad Url','message':message}, status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
         else:
-            return Response(data={'status': 'Bad Url','message':message}, status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
         
 
     def print_hello(self,request):
