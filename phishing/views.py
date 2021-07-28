@@ -293,9 +293,9 @@ class PhishingUnView(viewsets.ViewSet):
         if good_data > bad_data:
             return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
         elif good_data < bad_data:
-            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Bad Url','message':message}], status=status.HTTP_200_OK)
         else:
-            return Response(data=[{'status': 'Good Url','message':message}], status=status.HTTP_200_OK)
+            return Response(data=[{'status': 'Bad Url','message':message}], status=status.HTTP_200_OK)
         
 
     def print_hello(self,request):
