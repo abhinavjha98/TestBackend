@@ -16,8 +16,10 @@ class MailUser(Base):
 class SendMail(Base):
    subject = models.CharField(max_length=200, null=True)
    category = models.ForeignKey(Category, null=True,on_delete=models.CASCADE)
+   html_data = models.CharField(max_length=1000,null=True,blank=True)
+   body = models.CharField(null=True,max_length=1000,blank=True)
     
    def save(self, *args, **kwargs):
-       send_mails(self.category)
+       send_mails(self.category,self.subject,self.html_data,self.body)
        print(self.category)
        super(SendMail, self).save(*args, **kwargs)
