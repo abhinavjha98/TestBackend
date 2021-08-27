@@ -180,6 +180,7 @@ def prefixSuffix(url):
 #   return x,X_train,y_train,vectorizer	
 
 def check_url(url):
+  sub = []
   start_time = time.time()
 
   try:
@@ -188,7 +189,6 @@ def check_url(url):
     return "bad"
   url_good_bad = ""
   url_date = find_date(url)
-
   if url_date < 90:
     url_date_response = 1
   else:
@@ -235,35 +235,57 @@ def check_url(url):
   if redirection_url == 1:
     url_good_bad = "good"
   else:
+    sub.append("Spear Phishing")
+    sub.append("Credential Stealing")
     url_good_bad = "bad"
 
   forward_url = forwarding(response)
   if forward_url == 1:
     url_good_bad = "good"
   else:
+    sub.append("Spear Phishing")
+    sub.append("Credential Stealing")
     url_good_bad = "bad"
   print("Forward URL "+str(forwarding(response)),(time.time() - start_time))
   
   right_click_url = rightClick(response)
+  if right_click_url == 1:
+    pass
+  else:
+    sub.append("Spear Phishing")
+    sub.append("Credential Stealing")
+    
   print("Right Click "+str(rightClick(response)),(time.time() - start_time))
 
   mouse_over_url = mouseOver(response)
   print("Mouse Over "+str(mouseOver(response)),(time.time() - start_time))
 
   iframe_url = iframe(response)
+  if iframe_url == 1:
+    pass
+  else:
+    sub.append("Pop Up Phishing")
+
+   
   print("IFrame "+str(iframe(response)),(time.time() - start_time))
   
   print("HTTP Domain "+str(httpDomain(url)),(time.time() - start_time))
+  if (httpDomain):
+    pass
+  else:
+    sub.append("HTTPS Phishing")
+  
   print("Tiny URL "+str(tinyURL(url)),(time.time() - start_time))
   print("Prefix Suffix "+str(prefixSuffix(url)),(time.time() - start_time))
-
+  sub = list(set(sub))
+  print(sub)
   good_or_bad = forward_url and right_click_url and mouse_over_url and iframe_url and redirection_url
   if good_or_bad == 0:
     print("Bad URL",(time.time() - start_time))
-    return "bad"
+    return ["bad",sub]
   else:
     print("Good Url",(time.time() - start_time))
-    return "good"
+    return ["good",sub]
 
 
 def find_urls(string):

@@ -77,14 +77,23 @@ class PhishingView(viewsets.ViewSet):
         user = request.user
         data = request.data
         message = data.get('message')
+        endpoint = data.get('endpoint')
         print(message)
         msg = clean_text(message)
         url_list = find_urls(msg)
         print(url_list)
         response_list = []
+        sub=[]
         good_data=0
         bad_data=0
-        
+        category = ""
+        if endpoint == 'mobile':
+            category = 'Smishing'
+        elif endpoint == 'url':
+            category = 'Phishing Links'
+        else:
+            category = 'Email Phishing'
+        good_bad=[]
         for i in range(len(url_list)):
             good_list = ['https://www.pandrdental.com/','https://www.intechhub.com/']
             if url_list[i] in good_list:
@@ -99,8 +108,10 @@ class PhishingView(viewsets.ViewSet):
                     bad_data = bad_data + 1
             else:
                 good_bad = check_url(url_list[i])
+                print("H")
+                print(good_bad)
                 cache.get_or_set(url_list[i],good_bad,timeout=None)
-                if(good_bad == "good"):
+                if(good_bad[0] == "good"):
                     Result(user=user,url=url_list[i],label="good",date=timezone.now()).save()
                     good_data = good_data + 1
                 else:
@@ -108,15 +119,15 @@ class PhishingView(viewsets.ViewSet):
                     bad_data = bad_data + 1
         
         if(len(url_list)==0):
-            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            return Response(data={'status': 'Good Url','endpoint':endpoint,'category':None,'subcategory':None}, status=status.HTTP_200_OK)
         print(good_data)
         print(bad_data)
         if good_data > bad_data:
-            return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+            return Response(data={'status': 'Good Url','endpoint':endpoint,'category':None,'subcategory':None}, status=status.HTTP_200_OK)
         elif good_data < bad_data:
-            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+            return Response(data={'status': 'Bad Url','endpoint':endpoint,'category':category,'subcategory':good_bad[1]}, status=status.HTTP_200_OK)
         else:
-            return Response(data={'status': 'Bad Url'}, status=status.HTTP_200_OK)
+            return Response(data={'status': 'Bad Url','endpoint':endpoint,'category':category,'subcategory':good_bad[1]}, status=status.HTTP_200_OK)
 
     def check_attachment(self,request):
         user = request.user
