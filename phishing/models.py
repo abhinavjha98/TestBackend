@@ -7,3 +7,7 @@ class Result(Base):
     url = models.CharField(max_length=200, null=True)
     label = models.CharField(max_length=50,null=True)
     date = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
+
+class CategoryResult(Base):
+    url = models.CharField(max_length=200,null=True)
+    subCategory = models.CharField(max_length=200,null=True)
