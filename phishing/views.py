@@ -77,6 +77,7 @@ class PhishingView(viewsets.ViewSet):
         user = request.user
         data = request.data
         message = data.get('message')
+        print(message)
         msg = clean_text(message)
         url_list = find_urls(msg)
         print(url_list)
@@ -87,7 +88,7 @@ class PhishingView(viewsets.ViewSet):
         for i in range(len(url_list)):
             good_list = ['https://www.pandrdental.com/','https://www.intechhub.com/']
             if url_list[i] in good_list:
-                return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
+                good_data = good_data + 1
             if(cache.get(url_list[i])):
                 response_data = cache.get(url_list[i])
                 if response_data == "good":
@@ -108,7 +109,8 @@ class PhishingView(viewsets.ViewSet):
         
         if(len(url_list)==0):
             return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
-
+        print(good_data)
+        print(bad_data)
         if good_data > bad_data:
             return Response(data={'status': 'Good Url'}, status=status.HTTP_200_OK)
         elif good_data < bad_data:
