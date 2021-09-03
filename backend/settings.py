@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl_drf',
     'corsheaders',
     'mail',
+    'network', 
 ]
 ELASTICSEARCH_DSL =  {
     'default' :{

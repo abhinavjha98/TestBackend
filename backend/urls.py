@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/m/',include('database.urls')),
     path('api/m/',include('phishing.urls')),
     path('api/m/',include('phishing.urls')),
+    path('api/m/',include('network.urls')),
 ]
